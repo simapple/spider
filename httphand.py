@@ -4,7 +4,6 @@ from urlparse import urlparse
 import urllib2
 class httphand():
     def geturl(self,url):
-#        print url
         resp = self.run(url)
         jumpnumber = 0
         jumpinfo = []
@@ -15,8 +14,6 @@ class httphand():
             try:
                 tt = []
                 while resp.status != 200 :
-#                    print resp.getheader('location')
-#                    print jumpinfo
                     tt.append(resp.getheader('location'))
                     if resp.getheader('location') in tt:#·ÀÖ¹½øÈëÏİÚå
                         break
