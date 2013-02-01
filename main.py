@@ -45,9 +45,7 @@ def main():
     db.initdatabase()#数据表初始化
     db.selecturls2()
     db.insertone(start,'urls')
-
     queue = Queue()
-
     threadnumber = 30
     lock = threading.Lock()
     for i in range(threadnumber):#初始化线程池
