@@ -1,17 +1,17 @@
-#coding:cp936
-#Ê¹ÓÃĞ­³Ì×÷Òµ
-import urllib2
-from BeautifulSoup import BeautifulSoup
+#coding:utf8
+#ä½¿ç”¨åç¨‹ä½œä¸š
+import urllib
+from bs4 import BeautifulSoup
 import re
 from sqlhand import dbhand
 import logging
 from collections import deque
 import time
-from urlparse import urlparse
+from urllib.parse import urlparse
 from httphand import httphand
-from Queue import Queue
-import cPickle
-from sets import Set
+from queue import Queue
+import pickle
+
 def getlog(info):
       logger = logging.getLogger()
       hdlr = logging.FileHandler(info['logfile'])
@@ -21,10 +21,10 @@ def getlog(info):
       try:
           logger.setLevel(info['loglevel'])
       except:
-          print "ÄãÊäÈëµÄÈÕÖ¾µÈ¼¶²»ÕıÈ·"
+          print("ä½ è¾“å…¥çš„æ—¥å¿—ç­‰çº§ä¸æ­£ç¡®")
       return logger
 
-def getaurl(info):#²É¼¯Ò³ÃæÉÏËùÓĞµÄurl£¬ÒÔ¼°´Ë´Î·ÃÎÊµÄ×´Ì¬Âë
+def getaurl(info):#é‡‡é›†é¡µé¢ä¸Šæ‰€æœ‰çš„urlï¼Œä»¥åŠæ­¤æ¬¡è®¿é—®çš„çŠ¶æ€ç 
     tmp = {}
     urls = {}
     try:
@@ -32,8 +32,8 @@ def getaurl(info):#²É¼¯Ò³ÃæÉÏËùÓĞµÄurl£¬ÒÔ¼°´Ë´Î·ÃÎÊµÄ×´Ì¬Âë
         result = xsdanx.geturl(info)
         if result is None:
               tmp['url'] = info
-              tmp['response'] = 404#×´Ì¬Âë
-              tmp['title'] = ''#±êÌâ
+              tmp['response'] = 404#çŠ¶æ€ç 
+              tmp['title'] = ''#æ ‡é¢˜
               tmp['inurl'] = 0
               tmp['outurl'] = 0
               tmp['jumpnumber'] = 0
@@ -43,11 +43,11 @@ def getaurl(info):#²É¼¯Ò³ÃæÉÏËùÓĞµÄurl£¬ÒÔ¼°´Ë´Î·ÃÎÊµÄ×´Ì¬Âë
               sop = BeautifulSoup(result['data'])
               urls = sop.findAll("a",{'href':True})
               try:
-                    title = sop.head.title.string#Ö»ÒªÒ»¸ötitle
+                    title = sop.head.title.string#åªè¦ä¸€ä¸ªtitle
               except AttributeError:
                     title = "null"
-              tmp['response'] = result['response']#×´Ì¬Âë
-              tmp['title'] = title#±êÌâ
+              tmp['response'] = result['response']#çŠ¶æ€ç 
+              tmp['title'] = title#æ ‡é¢˜
               tmp['url'] = info
               urltype = checkurl2(info,urls)
               tmp['inurl'] = urltype['inurl']
@@ -55,15 +55,14 @@ def getaurl(info):#²É¼¯Ò³ÃæÉÏËùÓĞµÄurl£¬ÒÔ¼°´Ë´Î·ÃÎÊµÄ×´Ì¬Âë
               tmp['jumpnumber'] = result['jumpnumber']
               tmp['jumpinfo'] = mkjumpinfo(result['jumpinfo'])
         return (tmp,urls)
-    except (urllib2.URLError,TypeError,UnicodeEncodeError):
+    except (urllib.URLError,TypeError,UnicodeEncodeError):
           return (tmp,urls)
 def mkjumpinfo(info):
       tmp = []
       for i in info:
-            tmp.append(re.escape(cPickle.dumps(i)))
+            tmp.append(re.escape(pickle.dumps(i)))
       return "|".join(tmp)
-      pass
-def checkurl2(url,text):#¼ì²éurl Çø·ÖÄÚÁ´ ÍâÁ´
+def checkurl2(url,text):#æ£€æŸ¥url åŒºåˆ†å†…é“¾ å¤–é“¾
     inurl = 0
     outurl = 0
     valid = re.compile("^"+url+".*$")
@@ -80,13 +79,13 @@ def checkurl2(url,text):#¼ì²éurl Çø·ÖÄÚÁ´ ÍâÁ´
             pass
     return tmp
 def allstar(info,db):
-    (thetest,urls) = getaurl(info['url'])
-    if len(thetest)  > 0 :
-          db.updateone(thetest,'urls')
-    if len(urls) > 0 :
+      (thetest,urls) = getaurl(info['url'])
+      if len(thetest)  > 0 :
+            db.updateone(thetest,'urls')
+      if len(urls) > 0 :
           urlsget(urls,db)
 
-def checkurl(text):#¼ì²éurl
+def checkurl(text):#æ£€æŸ¥url
     valid = re.compile("^[http|https].*$")
 
     if valid.match(text) is None:
@@ -98,7 +97,7 @@ def urlsget(urls,db):
     tmp = {}
     tmp2 = ''
     ttmp = set([])
-    for i in urls:#½«ÅÀÈ¥µ½µÄurlÈë¿â
+    for i in urls:#å°†çˆ¬å»åˆ°çš„urlå…¥åº“
           try:
                 tmp2 = urlparse(i['href'])
                 tmp['url'] = tmp2.scheme+"://"+tmp2.netloc

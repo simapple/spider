@@ -1,4 +1,4 @@
-#coding:cp936
+#coding:utf8
 import sqlite3
 import re
 class dbhand:
@@ -9,17 +9,17 @@ class dbhand:
         try:
             self.dbcon = sqlite3.connect(info,isolation_level="DEFERRED",check_same_thread=False)
             self.con = self.dbcon.cursor()
-            self.logger.info("Êı¾İ¿âÒÑÁ¬½Ó")
+            self.logger.info("æ•°æ®åº“å·²è¿æ¥")
         except:
-            self.logger.info("Êı¾İ¿âÁ¬½ÓÊ§°Ü")
-            print("Êı¾İ¿âÁ¬½ÓÊ§°Ü")
+            self.logger.info("æ•°æ®åº“è¿æ¥å¤±è´¥")
+            print("æ•°æ®åº“è¿æ¥å¤±è´¥")
             quit()
     def initdatabase(self):
         """
-        ³õÊ¼»¯Êı¾İ¿â
-        table1£º
-        url ÍøÖ· title ±êÌâÄÚÈİ inurl ÄÚÁ´ÊıÁ¿ outurl ÍâÁ´ÊıÁ¿ jumpnumber Ìø×ª´ÎÊı deep ²ã¼¶¶¨ÒåµÚ¼¸´ÎÈÎÎñÅÀÈ¡µ½µÄÁ´½Ó response ·µ»Ø×´Ì¬Âë
-        jumptype  Ìø×ªÀàĞÍ
+        åˆå§‹åŒ–æ•°æ®åº“
+        table1ï¼š
+        url ç½‘å€ title æ ‡é¢˜å†…å®¹ inurl å†…é“¾æ•°é‡ outurl å¤–é“¾æ•°é‡ jumpnumber è·³è½¬æ¬¡æ•° deep å±‚çº§å®šä¹‰ç¬¬å‡ æ¬¡ä»»åŠ¡çˆ¬å–åˆ°çš„é“¾æ¥ response è¿”å›çŠ¶æ€ç 
+        jumptype  è·³è½¬ç±»å‹
         """
         try:
             sql1 = """create table if not exists urls
@@ -27,9 +27,9 @@ class dbhand:
 
 """
             self.con.execute(sql1)
-            self.logger.info("Êı¾İ±í³õÊ¼»¯³É¹¦")
+            self.logger.info("æ•°æ®è¡¨åˆå§‹åŒ–æˆåŠŸ")
         except:
-            self.logger.error("Êı¾İ±í´´½¨Ê§°Ü")
+            self.logger.error("æ•°æ®è¡¨åˆ›å»ºå¤±è´¥")
             pass
 
     def insertone(self,info,table):
@@ -37,7 +37,7 @@ class dbhand:
         name = []
         value = []
         try:
-            for k,v in info.iteritems():
+            for k,v in info.items():
                 name.append("`%s`"%(str(k)))
                 value.append("'%s'"%(str(v)))
         except UnicodeEncodeError:
@@ -46,7 +46,7 @@ class dbhand:
         valuestr = ','.join(value)
         sql2 = "(%s)values(%s)"%(namestr, valuestr)
         sql = sql1+sql2
-        print "#######"+sql
+        print("#######"+sql)
         try:
             self.con.execute(sql)
             self.dbcon.commit()
@@ -71,7 +71,7 @@ class dbhand:
         #     part.append("`%s` = '%s'"%(k,str(v)))
         # partstr = ",".join(part)
         # sql = sql1+" set "+partstr + " where url = '%s' "%((str(info['url'])))
-        print "*******************************************"
+        print("*******************************************")
         try:
             self.con.execute("""update `urls` set title=?,inurl=?,jumpnumber=?,
 jumpinfo=?,outurl=?,response=? where url = ?
@@ -84,8 +84,8 @@ jumpinfo=?,outurl=?,response=? where url = ?
         pass
     def geturls(self,info,workid):
         """
-        info['did']  Éî¶È
-        info['url']  Á¬½Ó
+        info['did']  æ·±åº¦
+        info['url']  è¿æ¥
 
         """
         sql = "insert into urls (url,did,wid) values ('%s','%s','%s')"%(info['url'],info['did'],workid)
@@ -95,7 +95,7 @@ jumpinfo=?,outurl=?,response=? where url = ?
         except sqlite3.IntegrityError:
             pass
         except:
-            self.logger.error(str(info['did'])+"Éî¶È"+str(info['url'])+" ÎŞ·¨Õı³£Èë¿â")
+            self.logger.error(str(info['did'])+"æ·±åº¦"+str(info['url'])+" æ— æ³•æ­£å¸¸å…¥åº“")
 
 
     def selecturls2(self):

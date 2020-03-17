@@ -1,7 +1,7 @@
-#coding:cp936
-import httplib
-from urlparse import urlparse
-import urllib2
+#coding:utf8
+import http
+from urllib.parse import urlparse
+import urllib
 class httphand():
     def geturl(self,url):
         resp = self.run(url)
@@ -15,7 +15,7 @@ class httphand():
                 tt = []
                 while resp.status != 200 :
                     tt.append(resp.getheader('location'))
-                    if resp.getheader('location') in tt:#·ÀÖ¹½øÈëÏÝÚå
+                    if resp.getheader('location') in tt:#é˜²æ­¢è¿›å…¥é™·é˜±
                         break
                     tmp = {}
                     tmp['status'] = resp.status
@@ -28,7 +28,6 @@ class httphand():
                 response = resp.status
                 result = {'data':data,'jumpinfo':jumpinfo,'jumpnumber':jumpnumber,'response':response}
             except:
-#                print "$$$"
                 result = self.runurl(url)
         return result
     def runurl(self,url):
@@ -47,8 +46,9 @@ class httphand():
         try:
             host = urlparse(url)[1]
             req = '/'#.join(urlparse(url)[2:5])
-            conn = httplib.HTTPConnection(host,timeout = 10)
-            headers = {'User-Agent':'Mozilla/5.0 (X11; Linux i686; rv:8.0) Gecko/20100101 Firefox/8.0'}
+            conn = http.client.HTTPConnection(host,timeout = 10)
+            #headers = {'User-Agent':'Mozilla/5.0 (X11; Linux i686; rv:8.0) Gecko/20100101 Firefox/8.0'}
+            headers = {}
             conn.request('GET', req,headers = headers)
             resp = conn.getresponse()
         except:

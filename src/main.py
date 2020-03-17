@@ -1,9 +1,10 @@
-#coding:cp936
-import threading,Queue
+#coding:utf8
+import threading
+from queue import Queue
 from collections import deque
 from toolhand import *
 class multigeturl(threading.Thread):
-    '''线程'''
+    '''绾跨▼'''
     global temp
     def __init__(self,queue,threadname,logger,lock):
         threading.Thread.__init__(self,name=threadname)
@@ -22,8 +23,7 @@ class multigeturl(threading.Thread):
                 db = dbhand(self.logger)
                 dbfile = "todayb.db"
                 db.dbconnect(dbfile)
-                db.initdatabase()#数据表初始化
-                print info,self.getName()
+                db.initdatabase()#鏁版嵁琛ㄥ垵濮嬪寲
                 for tt in self.tmp:
                     allstar(tt,db)
                 self.tmp = []
@@ -32,35 +32,37 @@ class multigeturl(threading.Thread):
         self.queue.task_done()
 def main():
     start = {}
-    start['url'] = "http://www.hao123.com"
+    start['url'] = "https://www.hao123.com"
     logop = {}
     logop['logfile'] = "log.txt"#uop['logfile']
     logop['loglevel'] = "INFO"#uop['level']
     global logger
-    logger = getlog(logop)#构造log对象
+    logger = getlog(logop)#鏋勯�爈og瀵硅薄
     global db
     db = dbhand(logger)
     dbfile = "todayb.db"
     db.dbconnect(dbfile)
-    db.initdatabase()#数据表初始化
+    db.initdatabase()#鏁版嵁琛ㄥ垵濮嬪寲
     db.selecturls2()
     db.insertone(start,'urls')
     queue = Queue()
-    threadnumber = 30
+    threadnumber = 1
     lock = threading.Lock()
-    for i in range(threadnumber):#初始化线程池
+    for i in range(threadnumber):#鍒濆鍖栫嚎绋嬫睜
         t1 = multigeturl(queue,'urlt_'+str(i),logger,lock)
         t1.setDaemon(True)
         t1.start()
     allurl = db.selecturls2()
+    if len(allurl) < 2:
+        allstar(start,db)
+        queue.put(start['url'])
 
-    while True:
-        while len(allurl) > 0:
+    while len(allurl) > 0:
 
-            t = allurl.pop()
-            queue.put(t)
+        t = allurl.pop()
+        queue.put(t)
         allurl = db.selecturls2()
-        queue.join()
+    queue.join()
 
 if __name__ == "__main__":
     main()
