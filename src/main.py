@@ -46,7 +46,7 @@ def main():
     db.selecturls2()
     db.insertone(start,'urls')
     queue = Queue()
-    threadnumber = 1
+    threadnumber = 3
     lock = threading.Lock()
     for i in range(threadnumber):#初始化线程池
         t1 = multigeturl(queue,'urlt_'+str(i),logger,lock)
